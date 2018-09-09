@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab');
+
+.rssItem {
+	clear: both;
+	overflow: auto;
+	margin: 1em;
+	padding: 1em;
+	border-radius: 1em;
+	background-color: #f6f4ef;
+}
+
+.title {
+	font-family: 'Roboto', sans-serif;
+}
+
+.title a {
+	text-decoration: none;
+}
+
+.title a:hover {
+	color: green;
+}
+
+.description {
+	font-family: 'Roboto Slab', serif;
+}
+
+.publicationDate {
+	font-family: 'Roboto', sans-serif;
+}
+
+.media {
+	margin-right: 1em;
+	float: left;
+	width:10%;
+}
+
+.image-placeholder {
+	margin-right: 1em;
+	float: left;
+	background-color: lightgrey;
+	height:0;
+	width:10%;
+	padding-bottom:10%;
+}
+
+.provider {
+	float: left;
+}
+
+.providerImage {
+	height: 1em;
+}
+
+.providerNameWithoutImage {
+	
+}
+
+.score {
+	font-color: red;
+	border: 1px solid lightblue;
+	background-color: lightblue;
+}
+
+.stringified {
+	
+	 /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+	
+	background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+}
+
+.keyword {
+	border: 1px solid grey;
+	border-radius: 4px;
+	background-color: #EEE;
+}
+
+.keyword-text {
+	font-weight: bold;
+}
+.keyword-posTag {
+	font-size: 0.5em;
+}
+.keyword-frequency {
+	font-style: italic;
+}
+
+.form {
+	font-family: 'Roboto Slab', serif;
+	position:fixed;
+	top:0;
+	padding: 0.5em;
+	background-color: rgba(255,255,255,0.5);
+	width: 100%;
+}
+
+.find-similar {
+	background-color: lightblue;
+	border: 1px solid lightblue;
+	border-radius: 0.5em;
+}
