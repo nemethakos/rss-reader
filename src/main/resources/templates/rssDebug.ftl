@@ -40,7 +40,7 @@
 		<span class="keyword">
 		<span class="keyword-text">${keyword.text}</span>
 		<span class="keyword-posTag">${keyword.posTag}</span>
-		<span class="keyword-frequency">${keyword.frequency}</span>
+		<span class="keyword-frequency">${keyword.score}</span>
 		</span>
 	</#list>
 	
