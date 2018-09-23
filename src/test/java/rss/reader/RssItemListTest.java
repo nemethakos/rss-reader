@@ -12,11 +12,12 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import archive.FileHtmlGenerator;
+import archive.RssItemList;
 import rss.dao.RssFeedDefinitionDAO;
 import rss.reader.downloader.ArticleDownloader;
 import rss.reader.model.RssItem;
 import rss.reader.nls.PosTaggerAndLemmatizer;
-import rss.reader.web.FileHtmlGenerator;
 
 class RssItemListTest {
 

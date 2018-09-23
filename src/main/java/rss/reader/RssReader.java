@@ -37,7 +37,7 @@ public class RssReader {
 	static Pattern pattern = Pattern.compile("<(\\w+)( +.+)*>((.*))</\\1>");
 	static Matcher matcher = pattern.matcher("<as testAttr='5'> TEST</as>");
 
-	public static boolean containsHTML(String text) {
+	private static boolean containsHTML(String text) {
 		if (text != null && text.length() > 0 && pattern.matcher(text).find()) {
 			// for (int i = 0; i < matcher.groupCount(); i++) {
 			// System.out.println(i + ":" + matcher.group(i));
@@ -47,7 +47,7 @@ public class RssReader {
 		return false;
 	}
 
-	public static String removeHTMLFromText(String text) {
+	private static String removeHTMLFromText(String text) {
 		String result = "No Description";
 
 		if (text != null) {
@@ -60,7 +60,7 @@ public class RssReader {
 					var generic = doc.text();
 					var sentences = PosTaggerAndLemmatizer.getInstance().getSentences(generic);
 
-					System.out.println(sentences);
+					//System.out.println(sentences);
 					
 					var toIndex = sentences.size() >= (SENTENCE_NUMBER_FOR_DIGEST - 1)
 							? (SENTENCE_NUMBER_FOR_DIGEST - 1)
@@ -205,7 +205,7 @@ public class RssReader {
 			RssMedia media = selectBestMedia(rssMediaList);
 
 			var item = RssItem.builder()//
-					.withId(idGenerator.incrementAndGet())//
+					//
 					.withDescription(removeHTMLFromText(description))//
 					.withLink(link)//
 					.withPublicationDate(pubDate)//

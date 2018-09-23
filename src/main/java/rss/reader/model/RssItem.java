@@ -3,31 +3,210 @@ package rss.reader.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Generated;
 
-import rss.reader.nls.Score;
+/**
+ * Represents an entry from RSS Feed
+ */
+public class RssItem {
 
-public class RssItem implements Comparable<RssItem> {
-
+	/**
+	 * List of categories
+	 */
 	private List<String> categoryList = new ArrayList<>();
+	
+	/**
+	 * Description of RSS entry
+	 */
 	private String description;
+	
+	/**
+	 * GUID of RSS entry
+	 */
 	private String guid;
-	private Long id;
+	
+	/**
+	 * MongoDB objectId
+	 */
+	private String id;
+	
 	private String jsoupCssSelector;
-	private Set<Word> keywordSet = null;
+	
+	/**
+	 * Set of keywords extracted from the article body
+	 */
+	private Set<Word> keywordSet = new HashSet<>();
+	
+	/**
+	 * Link to the article
+	 */
 	private String link;
+	
+	/**
+	 * Selected image for artickle
+	 */
 	private RssMedia media;
+	
+	/**
+	 * Link to the image of the provider
+	 */
 	private String providerImage;
+	
+	/**
+	 * Name of the provider (e.g.: BBC)
+	 */
 	private String providerName;
+	
+	/**
+	 * Publication date from RSS entry
+	 */
 	private Date publicationDate;
-	private List<RssMedia> rssMediaList = new ArrayList<>();
-	private Long score;
-	private Score searchScore;
+	
+	/**
+	 * Not saved to DB
+	 */
+	private List<RssMedia> rssMediaList;
+	
+	/**
+	 * Textual representation for debugging
+	 */
 	private String stringifiedEntry;
+
+	/**
+	 * Title of RSS entry
+	 */
 	private String title;
+
+	@Generated("SparkTools")
+	private RssItem(Builder builder) {
+		this.categoryList = builder.categoryList;
+		this.description = builder.description;
+		this.guid = builder.guid;
+		this.id = builder.id;
+		this.jsoupCssSelector = builder.jsoupCssSelector;
+		this.keywordSet = builder.keywordSet;
+		this.link = builder.link;
+		this.media = builder.media;
+		this.providerImage = builder.providerImage;
+		this.providerName = builder.providerName;
+		this.publicationDate = builder.publicationDate;
+		this.rssMediaList = builder.rssMediaList;
+		this.stringifiedEntry = builder.stringifiedEntry;
+		this.title = builder.title;
+	}
+
+	public List<String> getCategoryList() {
+		return categoryList;
+	}
+	public String getDescription() {
+		return description;
+	}
+
+	public String getGuid() {
+		return guid;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public Set<Word> getKeywordSet() {
+		return keywordSet;
+	}
+	public String getLink() {
+		return link;
+	}
+	public RssMedia getMedia() {
+		return media;
+	}
+	public String getProviderImage() {
+		return providerImage;
+	}
+	public String getProviderName() {
+		return providerName;
+	}
+	public Date getPublicationDate() {
+		return publicationDate;
+	}
+	public List<RssMedia> getRssMediaList() {
+		return rssMediaList;
+	}
+	public String getStringifiedEntry() {
+		return stringifiedEntry;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setCategoryList(List<String> categoryList) {
+		this.categoryList = categoryList;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public void setKeywordSet(Set<Word> keywordSet) {
+		this.keywordSet = keywordSet;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	@Override
+	public String toString() {
+		return "RssItem [categoryList=" + categoryList + ", description=" + description + ", guid=" + guid + ", id="
+				+ id + ", jsoupCssSelector=" + jsoupCssSelector + ", keywordSet=" + keywordSet + ", link=" + link
+				+ ", media=" + media + ", providerImage=" + providerImage + ", providerName=" + providerName
+				+ ", publicationDate=" + publicationDate + ", rssMediaList=" + rssMediaList + ", stringifiedEntry="
+				+ stringifiedEntry + ", title=" + title + "]";
+	}
+
+	public void setMedia(RssMedia media) {
+		this.media = media;
+	}
+	public void setProviderImage(String providerImage) {
+		this.providerImage = providerImage;
+	}
+	public void setProviderName(String providerName) {
+		this.providerName = providerName;
+	}
+	public void setPublicationDate(Date publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+	public void setRssMediaList(List<RssMedia> rssMediaList) {
+		this.rssMediaList = rssMediaList;
+	}
+	public void setStringifiedEntry(String stringifiedEntry) {
+		this.stringifiedEntry = stringifiedEntry;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getJsoupCssSelector() {
+		return jsoupCssSelector;
+	}
+
+	public void setJsoupCssSelector(String jsoupCssSelector) {
+		this.jsoupCssSelector = jsoupCssSelector;
+	}
+
+	/**
+	 * Creates builder to build {@link RssItem}.
+	 * @return created builder
+	 */
+	@Generated("SparkTools")
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/**
 	 * Builder to build {@link RssItem}.
@@ -37,7 +216,7 @@ public class RssItem implements Comparable<RssItem> {
 		private List<String> categoryList = Collections.emptyList();
 		private String description;
 		private String guid;
-		private Long id;
+		private String id;
 		private String jsoupCssSelector;
 		private Set<Word> keywordSet = Collections.emptySet();
 		private String link;
@@ -46,16 +225,10 @@ public class RssItem implements Comparable<RssItem> {
 		private String providerName;
 		private Date publicationDate;
 		private List<RssMedia> rssMediaList = Collections.emptyList();
-		private Long score;
-		private Score searchScore;
 		private String stringifiedEntry;
 		private String title;
 
 		private Builder() {
-		}
-
-		public RssItem build() {
-			return new RssItem(this);
 		}
 
 		public Builder withCategoryList(List<String> categoryList) {
@@ -73,7 +246,7 @@ public class RssItem implements Comparable<RssItem> {
 			return this;
 		}
 
-		public Builder withId(Long id) {
+		public Builder withId(String id) {
 			this.id = id;
 			return this;
 		}
@@ -118,16 +291,6 @@ public class RssItem implements Comparable<RssItem> {
 			return this;
 		}
 
-		public Builder withScore(Long score) {
-			this.score = score;
-			return this;
-		}
-
-		public Builder withSearchScore(Score searchScore) {
-			this.searchScore = searchScore;
-			return this;
-		}
-
 		public Builder withStringifiedEntry(String stringifiedEntry) {
 			this.stringifiedEntry = stringifiedEntry;
 			return this;
@@ -137,154 +300,10 @@ public class RssItem implements Comparable<RssItem> {
 			this.title = title;
 			return this;
 		}
-	}
-	/**
-	 * Creates builder to build {@link RssItem}.
-	 * @return created builder
-	 */
-	@Generated("SparkTools")
-	public static Builder builder() {
-		return new Builder();
-	}
-	@Generated("SparkTools")
-	private RssItem(Builder builder) {
-		this.categoryList = builder.categoryList;
-		this.description = builder.description;
-		this.guid = builder.guid;
-		this.id = builder.id;
-		this.jsoupCssSelector = builder.jsoupCssSelector;
-		this.keywordSet = builder.keywordSet;
-		this.searchScore = builder.searchScore;
-		this.link = builder.link;
-		this.media = builder.media;
-		this.providerImage = builder.providerImage;
-		this.providerName = builder.providerName;
-		this.publicationDate = builder.publicationDate;
-		this.rssMediaList = builder.rssMediaList;
-		this.score = builder.score;
-		this.stringifiedEntry = builder.stringifiedEntry;
-		this.title = builder.title;
-	}
 
-	@Override
-	public int compareTo(RssItem o) {
-		if (o != null) {
-
-			return (int) (o.getScore() - this.getScore());
+		public RssItem build() {
+			return new RssItem(this);
 		}
-		return 0;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		RssItem other = (RssItem) obj;
-		if (guid == null) {
-			if (other.guid != null)
-				return false;
-		} else if (!guid.equals(other.guid))
-			return false;
-		return true;
-	}
-
-	public List<String> getCategoryList() {
-		return categoryList;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getGuid() {
-		return guid;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getJsoupCssSelector() {
-		return jsoupCssSelector;
-	}
-
-	public Set<Word> getKeywordSet() {
-		return keywordSet;
-	}
-
-	public String getLink() {
-		return link;
-	}
-
-	public RssMedia getMedia() {
-		return media;
-	}
-
-	public String getProviderImage() {
-		return providerImage;
-	}
-
-	public String getProviderName() {
-		return providerName;
-	}
-
-	public Date getPublicationDate() {
-		return publicationDate;
-	}
-
-	public List<RssMedia> getRssMediaList() {
-		return rssMediaList;
-	}
-
-	public Long getScore() {
-		return score;
-	}
-
-	public Score getSearchScore() {
-		return searchScore;
-	}
-
-	public String getStringifiedEntry() {
-		return stringifiedEntry;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
-		return result;
-	}
-
-	public boolean hasKeywords() {
-		return keywordSet != null;
-	}
-
-	public void setKeywordSet(Set<Word> keywordSet) {
-		this.keywordSet = keywordSet;
-	}
-
-	public void setScore(Long score) {
-		this.score = score;
-	}
-
-	public void setSearchScore(Score searchScore) {
-		this.searchScore = searchScore;
-	}
-
-	@Override
-	public String toString() {
-		return "RssItem [categoryList=" + categoryList + ", description=" + description + ", guid=" + guid + ", id="
-				+ id + ", jsoupCssSelector=" + jsoupCssSelector + ", link=" + link + ", media=" + media
-				+ ", providerImage=" + providerImage + ", providerName=" + providerName + ", publicationDate="
-				+ publicationDate + ", rssMediaList=" + rssMediaList + ", score=" + score + ", title=" + title + "]";
-	}
 }

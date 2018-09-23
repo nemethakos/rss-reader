@@ -22,7 +22,7 @@
 	
 
 	
-	<#if rss.media?has_content>
+	<#if rss.media.link?has_content>
 		<img class="media" src="${rss.media.link}">
 	<#else>
 		<div class="image-placeholder" title="No image"></div>	

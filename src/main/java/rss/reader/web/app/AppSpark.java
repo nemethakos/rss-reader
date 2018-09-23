@@ -14,9 +14,8 @@ import com.mongodb.client.MongoDatabase;
 import freemarker.template.TemplateException;
 import rss.dao.RssDAO;
 import rss.dao.RssFeedDefinitionDAO;
-import rss.reader.RssItemList;
+import rss.reader.RssItemUpdater;
 import rss.reader.downloader.ArticleDownloader;
-import rss.reader.model.RssItem;
 import rss.reader.nls.PosTaggerAndLemmatizer;
 import rss.reader.web.TemplateHtmlGenerator;
 import spark.Request;
@@ -41,13 +40,30 @@ public class AppSpark {
 		PosTaggerAndLemmatizer tagger = PosTaggerAndLemmatizer.getInstance();
 		ArticleDownloader downloader = new ArticleDownloader(tagger);
 
-		RssItemList userFeed = new RssItemList(downloader, rssFeedDefinitionDAO, rssDAO);
+		RssItemUpdater userFeed = new RssItemUpdater(downloader, rssFeedDefinitionDAO, rssDAO);
 
 		userFeed.initFeeds();
 
 		Spark.staticFileLocation("/static");
 		Spark.setPort(80);
+		
+		Spark.get(new Route("/") {
 
+			@Override
+			public Object handle(Request request, Response response) {
+				var lastItems = rssDAO.getLastRssItemList(100);
+				var html = "";
+				try {
+					html = templateHtmlGenerator.getRssItemListHtml(lastItems);
+				} catch (TemplateException | IOException e) {
+					html = e.toString();
+				}
+				return html;
+			}
+			
+		});
+		
+/*
 		Spark.get(new Route("/find-similar/:id") {
 
 			@Override
@@ -131,5 +147,6 @@ public class AppSpark {
 				return html;
 			}
 		});
+		*/
 	}
 }
