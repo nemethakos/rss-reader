@@ -8,7 +8,12 @@
 		<img class="media" src="${mediaList.link}">
 </#list>
 <hr>
-	<#if rss.media?has_content>
+	
+	<#list rss.categoryList as category>
+		<span class="category">${category}</span> 
+	</#list>
+
+	<#if rss.media.link?has_content>
 		<img class="media" src="${rss.media.link}">
 	</#if>	
 	<div class="title">
@@ -36,7 +41,7 @@
 -->
 <div class='stringified'>${rss}</div>
 
-<#list rss.keywordSet as keyword>
+	<#list rss.keywordList as keyword>
 		<span class="keyword">
 		<span class="keyword-text">${keyword.text}</span>
 		<span class="keyword-posTag">${keyword.posTag}</span>

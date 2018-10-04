@@ -15,12 +15,14 @@
 
 <#list rssItemList as rss>
 <div class="rssItem">
-    <a class="find-similar" href="/find-similar/${rss.id}">Find Similar articles</a>
+  <!--  <a class="find-similar" href="/find-similar/${rss.id}">Find Similar articles</a> -->
 	<#if rss.score?has_content>
 		<div class="score">${rss.score}</div>
 	</#if>
 	
-
+	<#list rss.categoryList as category>
+		<span class="category">${category}</span> 
+	</#list>
 	
 	<#if rss.media.link?has_content>
 		<img class="media" src="${rss.media.link}">
@@ -47,7 +49,7 @@
 	<#else>
 	<div class="publicationDate">No Publication date is given in the RSS feed!</div>
 	</#if>
-	<a class="debugLink" href="/item/${rss.id}">Debug</a>
+	<a class="debugLink" href="/debug/${rss.id}">Debug</a>
 	
 	<#if rss.searchScore?has_content>
 	<#list rss.searchScore.wordList as keyword>

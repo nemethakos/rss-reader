@@ -29,6 +29,7 @@ public class RssFeedDefinitionDAO {
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<RssFeedDefinition> getRssFeedList() {
 
 		List<RssFeedDefinition> result = new ArrayList<>();
@@ -37,6 +38,7 @@ public class RssFeedDefinitionDAO {
 		for (var feed : rssFeedList) {
 
 			var rssFeedDefinition = RssFeedDefinition.builder()
+					.withCategoryList((List<String>)feed.get("categoryList"))
 					.withId(feed.getObjectId("_id").toString())
 					.withLastBuildDate(feed.getDate("lastBuildDate"))
 					.withJsoupCssSelector(feed.getString("jsoupCssSelector"))

@@ -1,8 +1,11 @@
 package rss.reader.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Generated;
+import java.util.Collections;
 
 /**
  * Defines the URL, update interval, a source name (e.g.: CNN), an icon URL for
@@ -12,9 +15,7 @@ import javax.annotation.Generated;
  */
 public class RssFeedDefinition {
 	
-	public void setLastBuildDate(Date lastBuildDate) {
-		this.lastBuildDate = lastBuildDate;
-	}
+	private List<String> categoryList = new ArrayList<String>();
 
 	private String descriptionProcessingStrategy = "default";
 	private boolean enabled = true;
@@ -25,12 +26,12 @@ public class RssFeedDefinition {
 	private String sourceName;
 	private int updateIntervalMinutes = 60;
 	private String url;
-
 	/**
 	 * Builder to build {@link RssFeedDefinition}.
 	 */
 	@Generated("SparkTools")
 	public static final class Builder {
+		private List<String> categoryList = Collections.emptyList();
 		private String descriptionProcessingStrategy;
 		private boolean enabled;
 		private String id;
@@ -46,6 +47,11 @@ public class RssFeedDefinition {
 
 		public RssFeedDefinition build() {
 			return new RssFeedDefinition(this);
+		}
+
+		public Builder withCategoryList(List<String> categoryList) {
+			this.categoryList = categoryList;
+			return this;
 		}
 
 		public Builder withDescriptionProcessingStrategy(String descriptionProcessingStrategy) {
@@ -93,6 +99,7 @@ public class RssFeedDefinition {
 			return this;
 		}
 	}
+
 	/**
 	 * Creates builder to build {@link RssFeedDefinition}.
 	 * @return created builder
@@ -114,11 +121,12 @@ public class RssFeedDefinition {
 
 	@Generated("SparkTools")
 	private RssFeedDefinition(Builder builder) {
+		this.categoryList = builder.categoryList;
 		this.descriptionProcessingStrategy = builder.descriptionProcessingStrategy;
 		this.enabled = builder.enabled;
-		this.lastBuildDate = builder.lastBuildDate;
 		this.id = builder.id;
 		this.jsoupCssSelector = builder.jsoupCssSelector;
+		this.lastBuildDate = builder.lastBuildDate;
 		this.sourceImageUrl = builder.sourceImageUrl;
 		this.sourceName = builder.sourceName;
 		this.updateIntervalMinutes = builder.updateIntervalMinutes;
@@ -133,6 +141,10 @@ public class RssFeedDefinition {
 		this.sourceName = sourceName;
 		this.updateIntervalMinutes = updateIntervalMinutes;
 		this.url = url;
+	}
+
+	public List<String> getCategoryList() {
+		return categoryList;
 	}
 
 	public String getDescriptionProcessingStrategy() {
@@ -175,12 +187,21 @@ public class RssFeedDefinition {
 		this.jsoupCssSelector = jsoupCssSelector;
 	}
 
-	@Override
-	public String toString() {
-		return "RssFeedDefinition [descriptionProcessingStrategy=" + descriptionProcessingStrategy + ", enabled="
-				+ enabled + ", id=" + id + ", jsoupCssSelector=" + jsoupCssSelector + ", lastBuildDate=" + lastBuildDate
-				+ ", sourceImageUrl=" + sourceImageUrl + ", sourceName=" + sourceName + ", updateIntervalMinutes="
-				+ updateIntervalMinutes + ", url=" + url + "]";
+	public void setLastBuildDate(Date lastBuildDate) {
+		this.lastBuildDate = lastBuildDate;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("RssFeedDefinition [categoryList=").append(categoryList)
+				.append(", descriptionProcessingStrategy=").append(descriptionProcessingStrategy).append(", enabled=")
+				.append(enabled).append(", id=").append(id).append(", jsoupCssSelector=").append(jsoupCssSelector)
+				.append(", lastBuildDate=").append(lastBuildDate).append(", sourceName=").append(sourceName)
+				.append(", updateIntervalMinutes=").append(updateIntervalMinutes).append(", url=").append(url)
+				.append("]");
+		return builder2.toString();
+	}
+
+	
 }

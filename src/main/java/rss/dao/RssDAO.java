@@ -7,16 +7,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Sorts;
 
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
 
+import rss.reader.model.RssFeedDefinition;
 import rss.reader.model.RssItem;
 import rss.reader.model.RssMedia;
 import rss.reader.model.Word;
@@ -33,6 +36,7 @@ public class RssDAO {
 	/**
 	 * Inserts the {@link RssItem}, if that does not exists yet in the DB based on
 	 * {@link RssItem#getGuid()}
+	 * @param feedDefinition 
 	 * 
 	 * @param rssItem the {@link RssItem}
 	 * @return
@@ -40,9 +44,9 @@ public class RssDAO {
 	 *         inserted,
 	 *         <li>{@code false} if the item was not inserted.
 	 */
-	public void insertRssItemList(List<RssItem> rssItemList) {
+	public void insertRssItemList(RssFeedDefinition feedDefinition, List<RssItem> rssItemList) {
 		if (rssItemList.size() > 0) {
-			System.out.println("\r\nInserting " + rssItemList.size() + " Documents...");
+			System.out.println("\r\nInserting " + rssItemList.size() + " Documents to " + feedDefinition.getUrl());
 			rssCollection.insertMany(getDocumentListForRssItemList(rssItemList));
 		}
 	}
@@ -63,20 +67,27 @@ public class RssDAO {
 		Document doc = new Document("guid", rssItem.getGuid());
 		doc.append("description", rssItem.getDescription());
 		doc.append("categoryList", rssItem.getCategoryList());
-		doc.append("keywordSet", getDocument(rssItem.getKeywordSet()));
+		doc.append("keywordSet", getDocumentFromKeywordList(rssItem.getKeywordList()));
 		doc.append("link", rssItem.getLink());
 		doc.append("media", getDocument(rssItem.getMedia()));
 		doc.append("providerImage", rssItem.getProviderImage());
 		doc.append("providerName", rssItem.getProviderName());
 		doc.append("publicationDate", rssItem.getPublicationDate());
-
+		doc.append("rssMediaList", getDocument(rssItem.getRssMediaList()));
 		doc.append("stringifiedEntry", rssItem.getStringifiedEntry());
 		doc.append("title", rssItem.getTitle());
 		return doc;
 	}
 
-	private List<Document> getDocument(Set<Word> keywordSet) {
-		return keywordSet.stream().map(word -> {//
+	private List<Document> getDocument(List<RssMedia> rssMediaList) {
+		return rssMediaList//
+				.stream()//
+				.map(media -> getDocument(media))//
+				.collect(Collectors.toList());
+	}
+
+	private List<Document> getDocumentFromKeywordList(List<Word> keywordList) {
+		return keywordList.stream().map(word -> {//
 			return new Document("text", word.getText())//
 					.append("posTag", word.getPosTag())//
 					.append("score", word.getScore());
@@ -85,7 +96,10 @@ public class RssDAO {
 	}
 
 	private List<Document> getDocumentListForRssMediaList(List<RssMedia> rssMediaList) {
-		return rssMediaList.stream().filter(Objects::nonNull).map(rssMedia -> getDocument(rssMedia))
+		return rssMediaList//
+				.stream()//
+				.filter(Objects::nonNull)//
+				.map(rssMedia -> getDocument(rssMedia))//
 				.collect(Collectors.toList());
 	}
 
@@ -166,7 +180,7 @@ public class RssDAO {
 				.withCategoryList(getCategoryListFromDocument(document))//
 				.withDescription(document.getString("description"))//
 				.withGuid(document.getString("guid"))//
-				.withKeywordSet(getKeywordSetFromDocument(document))//
+				.withKeywordList(getKeywordSetFromDocument(document))//
 				.withLink(document.getString("link"))//
 				.withMedia(getRssMediaFromDocument((Document) document.get("media")))//
 				.withProviderImage(document.getString("providerImage"))//
@@ -209,7 +223,7 @@ public class RssDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Set<Word> getKeywordSetFromDocument(Document document) {
+	protected List<Word> getKeywordSetFromDocument(Document document) {
 		return ((List<Document>) document.get("keywordSet"))//
 				.stream()//
 				.map(doc -> new Word(//
@@ -217,8 +231,31 @@ public class RssDAO {
 						doc.getString("posTag"), //
 						doc.getInteger("score")))
 				.collect(//
-						Collectors.toSet());
+						Collectors.toList());
 
+	}
+
+	public RssItem findById(String id) {
+		var doc = rssCollection.find(new Document("_id", new ObjectId(id))).first();
+		if (doc != null) {
+			return getRssItemFromDocument(doc);
+		} else {
+			return null;
+		}
+	}
+
+	public List<RssItem> findByKeywords(List<Word> searchWords, int maxNumberOfResults) {
+		List<String> keywordSet = searchWords//
+				.stream()//
+				.map(word -> word.getText())//
+				.collect(Collectors.toList());
+
+		return rssCollection//
+				.find(in("keywordSet.text", keywordSet))//
+				.sort(Sorts.orderBy(Sorts.descending("publicationDate")))//
+				.limit(maxNumberOfResults)//
+				.map(doc -> getRssItemFromDocument(doc))//
+				.into(new ArrayList<RssItem>());
 	}
 
 }

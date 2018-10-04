@@ -20,9 +20,9 @@ import edu.stanford.nlp.util.CoreMap;
 import rss.reader.model.Word;
 
 public class PosTaggerAndLemmatizer {
-	
-	private static PosTaggerAndLemmatizer INSTANCE; 
-	
+
+	private static PosTaggerAndLemmatizer INSTANCE;
+
 	public static PosTaggerAndLemmatizer getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new PosTaggerAndLemmatizer();
@@ -53,7 +53,7 @@ public class PosTaggerAndLemmatizer {
 	}
 
 	public List<String> getSentences(String text) {
-		
+
 		List<String> result = new ArrayList<>();
 
 		Annotation document = new Annotation(text);
@@ -62,55 +62,58 @@ public class PosTaggerAndLemmatizer {
 
 		// Iterate over all of the sentences found
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-		
-		for (CoreMap sentence: sentences) {
+
+		for (CoreMap sentence : sentences) {
 			result.add(sentence.toString());
 		}
-		
+
 		return result;
 	}
 
 	public List<Word> lemmatize(String documentText) {
 
 		List<Word> lemmas = new LinkedList<Word>();
-		// Create an empty Annotation just with the given text
-		Annotation document = new Annotation(documentText);
 
-		CoreDocument cdocument = new CoreDocument(documentText);
-		this.pipeline.annotate(cdocument);
+		if (documentText.trim().length() > 0) {
 
-		// run all Annotators on this text
-		this.pipeline.annotate(document);
+			// Create an empty Annotation just with the given text
+			Annotation document = new Annotation(documentText);
 
-		// Iterate over all of the sentences found
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+			CoreDocument cdocument = new CoreDocument(documentText);
+			this.pipeline.annotate(cdocument);
 
-		int i = 0;
-		for (CoreMap sentence : sentences) {
+			// run all Annotators on this text
+			this.pipeline.annotate(document);
 
-			CoreSentence csentence = cdocument.sentences().get(i++);
+			// Iterate over all of the sentences found
+			List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 
-			int j = 0;
-			// Iterate over all tokens in a sentence
-			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+			int i = 0;
+			for (CoreMap sentence : sentences) {
 
-				var posTag = csentence.posTags().get(j++);
+				CoreSentence csentence = cdocument.sentences().get(i++);
 
-				// Retrieve and add the lemma for each word into the
-				// list of lemmas
-				String lemma = token.get(LemmaAnnotation.class).toLowerCase();
+				int j = 0;
+				// Iterate over all tokens in a sentence
+				for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
 
-				Word word = new Word(lemma, posTag);
+					var posTag = csentence.posTags().get(j++);
 
-				if (!EXCLUDE_POS_TAGS.contains(word.getPosTag()) && !EXCLUDE_WORDS.contains(word.getText())) {
-					lemmas.add(word);
+					// Retrieve and add the lemma for each word into the
+					// list of lemmas
+					String lemma = token.get(LemmaAnnotation.class).toLowerCase();
+
+					Word word = new Word(lemma, posTag);
+
+					if (!EXCLUDE_POS_TAGS.contains(word.getPosTag()) && !EXCLUDE_WORDS.contains(word.getText())) {
+						lemmas.add(word);
+					}
+
 				}
-
 			}
+
+			lemmas = removeRepeatingOccurences(lemmas);
 		}
-
-		lemmas = removeRepeatingOccurences(lemmas);
-
 		return lemmas;
 	}
 

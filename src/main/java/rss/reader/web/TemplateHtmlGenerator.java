@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import rss.dao.RssDAO;
 import rss.reader.model.RssItem;
 import rss.reader.model.Word;
 import rss.reader.nls.Scorer;
@@ -30,6 +32,7 @@ public class TemplateHtmlGenerator {
 	private Configuration cfg;
 	private Template rssTemplate;
 	private Template rssDebugTemplate;
+	private Template testerTemplate;
 
 	public TemplateHtmlGenerator() throws IOException {
 
@@ -46,6 +49,20 @@ public class TemplateHtmlGenerator {
 
 		rssTemplate = cfg.getTemplate(RSS_FTL);
 		rssDebugTemplate = cfg.getTemplate(RSS_DEBUG_FTL);
+		testerTemplate = cfg.getTemplate("tester.ftl");
+	}
+	
+	public String applyJSoupSelectorToURL(String url, String selector, String content, String format) throws TemplateException, IOException {
+		HashMap<String, Object> rootMap = new HashMap<>();
+		Writer out = new StringWriter();
+		
+		rootMap.put("url", StringEscapeUtils.escapeHtml4(url));
+		rootMap.put("selector", StringEscapeUtils.escapeHtml4(selector));
+		rootMap.put("selected", content);
+		rootMap.put("format", format);
+		
+		testerTemplate.process(rootMap,out);
+		return out.toString();
 	}
 
 	public String getRssItemListHtml(List<RssItem> rssItemList) throws TemplateException, IOException {
@@ -66,9 +83,14 @@ public class TemplateHtmlGenerator {
 		rssDebugTemplate.process(rootMap, out);
 		return out.toString();
 	}
-
-	public String getRssSearchResults(String searchTerm, List<Word> searchWords, List<RssItem> rssItemList)
+	
+/*
+	public String getRssSearchResults(String searchTerm, List<Word> searchWords)
 			throws TemplateException, IOException {
+
+		
+		
+		
 		HashMap<String, Object> rootMap = new HashMap<>();
 
 		List<RssItem> searchResultList = new ArrayList<RssItem>();
@@ -90,7 +112,7 @@ public class TemplateHtmlGenerator {
 		rssTemplate.process(rootMap, out);
 		return out.toString();
 
-	}
+	}*/
 
 	public String findSimilar(Long id, List<RssItem> rssItemList) throws TemplateException, IOException {
 
@@ -109,7 +131,7 @@ public class TemplateHtmlGenerator {
 		var html = "id = " + id + ", not found";
 
 		for (var item : rssItemList) {
-			var score = Scorer.calculateScore(found.getKeywordSet(), item.getKeywordSet());
+			var score = Scorer.calculateScore(found.getKeywordList(), item.getKeywordList());
 			if (score.getScore() > 0) {
 			//	item.setScore(score.getScore());
 			//	item.setSearchScore(score);

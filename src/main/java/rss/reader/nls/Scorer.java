@@ -2,6 +2,7 @@ package rss.reader.nls;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -11,11 +12,15 @@ import rss.reader.model.Word;
 
 public class Scorer {
 
-	public static Map<String, Word> getWordMap(Set<Word> wordSet) {
-		return wordSet.stream().collect(Collectors.toMap(Word::getText, Function.identity()));
+	public static Map<String, Word> getWordMap(List<Word> wordSet) {
+		return wordSet
+				.stream()
+				.collect(Collectors
+						.toMap(
+								Word::getText, Function.identity()));
 	}
 
-	public static Score calculateScore(Set<Word> wordSet1, Set<Word> wordSet2) {
+	public static Score calculateScore(List<Word> wordSet1, List<Word> wordSet2) {
 		var result = new Score();
 
 		var map1 = getWordMap(wordSet1);

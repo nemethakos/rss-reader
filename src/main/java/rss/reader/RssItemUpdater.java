@@ -2,6 +2,7 @@ package rss.reader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +13,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rss.dao.RssDAO;
 import rss.dao.RssFeedDefinitionDAO;
 import rss.reader.downloader.ArticleDownloader;
+import rss.reader.model.ImageDescriptor;
 import rss.reader.model.RssFeedDefinition;
 import rss.reader.model.RssItem;
+import rss.reader.model.RssMedia;
 import rss.reader.model.Word;
 
 public class RssItemUpdater {
@@ -37,15 +41,14 @@ public class RssItemUpdater {
 	}
 
 	public void initFeeds() {
-		rssFeedDefinitionDAO//
-				.getRssFeedList()//
-				.stream()//
-				.forEach(//
-						feedDefinition -> executor.scheduleAtFixedRate(//
-								() -> updateFeed(feedDefinition), //
-								0, //
-								feedDefinition.getUpdateIntervalMinutes(), //
-								TimeUnit.MINUTES));
+		executor.scheduleAtFixedRate(() -> {
+
+			rssFeedDefinitionDAO//
+					.getRssFeedList()//
+					.stream()//
+					.forEach(
+							feedDefinition -> executor.schedule(() -> updateFeed(feedDefinition), 1, TimeUnit.SECONDS));
+		}, 0, 1, TimeUnit.MINUTES);
 	}
 
 	/**
@@ -56,28 +59,27 @@ public class RssItemUpdater {
 	private void updateFeed(RssFeedDefinition feedDefinition) {
 		try {
 
-			logger.info("Update Feed: " + feedDefinition);
+			logger.info("Update Feed: " + feedDefinition.getUrl());
 
 			List<RssItem> newRssItemList = new ArrayList<>();
 
 			newRssItemList = RssReader.readUrl(feedDefinition);
 
-			//System.out.println("\r\n\r\noriginal"+newRssItemList);
-			
+			// System.out.println("\r\n\r\noriginal"+newRssItemList);
+
 			newRssItemList = excludeAlreadyExistingItems(newRssItemList);
 
-			//System.out.println("\r\n\r\nExclude:"+newRssItemList);
+			// System.out.println("\r\n\r\nExclude:"+newRssItemList);
 
-			
 			newRssItemList//
 					.stream()//
 					.forEach(//
-							rssItem -> updateKeyWord(rssItem));
+							rssItem -> updateArticle(rssItem));
 
-			rssDAO.insertRssItemList(newRssItemList);
+			rssDAO.insertRssItemList(feedDefinition, newRssItemList);
 
 		} catch (Throwable e) {
-			logger.info("Feed update failed: " + feedDefinition.toString(), e);
+			logger.info("Feed update failed: " + feedDefinition.getUrl(), e);
 			e.printStackTrace();
 		}
 	}
@@ -114,16 +116,56 @@ public class RssItemUpdater {
 		return result;
 	}
 
-	private void updateKeyWord(RssItem rssItem) {
+	private void updateArticle(RssItem rssItem) {
 		List<Word> tagList;
 		try {
-			tagList = downloader.getTags(rssItem.getLink(), rssItem.getJsoupCssSelector());
-			var tags = new HashSet<Word>(tagList);
-			rssItem.setKeywordSet(tags);
-		} catch (IOException e) {
-			e.printStackTrace();
+			Document doc = downloader.downloadArticle(rssItem.getLink());
+			String html = downloader.getHtmlOfArticle(doc, rssItem.getJsoupCssSelector());
+
+			List<ImageDescriptor> images = downloader.getImages(rssItem.getLink(), doc, rssItem.getJsoupCssSelector());
+			if (rssItem.getMedia() == null) {
+				rssItem.setMedia(selectBestImage(images));
+			}
+			rssItem//
+					.setRssMediaList(//
+							images//
+									.stream()//
+									.map(imageDescriptor -> getRssMediaFromImageDescriptor(imageDescriptor))//
+									.collect(Collectors.toList()));
+			// }
+
+			tagList = downloader.getTags(html);
+			var tags = new ArrayList<Word>(tagList);
+			rssItem.setKeywordList(tags);
+		} catch (Exception e) {
+			logger.error("Error processing Rss item: " + rssItem, e);
 		}
 
+	}
+
+	private RssMedia selectBestImage(List<ImageDescriptor> imageDescriptorList) {
+		if (imageDescriptorList.size() == 0) {
+			return null;
+		} else if (imageDescriptorList.size() == 1) {
+			return getRssMediaFromImageDescriptor(imageDescriptorList.get(0));
+		}
+		Collections.sort(imageDescriptorList, (ImageDescriptor a, ImageDescriptor b) -> {
+			// System.out.println("Sort: A:" + a + ", B:" + b);
+			var sizeA = a.getImageData().getWidth() * a.getImageData().getHeight();
+			var sizeB = b.getImageData().getWidth() * b.getImageData().getHeight();
+			return sizeB - sizeA;
+		});
+		var bestImage = imageDescriptorList.get(0);
+		return getRssMediaFromImageDescriptor(bestImage);
+	}
+
+	private RssMedia getRssMediaFromImageDescriptor(ImageDescriptor image) {
+		return RssMedia//
+				.builder()//
+				.withLink(image.getUrl())//
+				.withWidth(image.getImageData().getWidth())//
+				.withHeight(image.getImageData().getHeight())//
+				.build();
 	}
 
 }

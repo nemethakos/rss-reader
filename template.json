@@ -1,0 +1,9 @@
+{"jsoupCssSelector":"div.entry",
+"sourceImageUrl":"<https://www.javacodegeeks.com/wp-content/uploads/2012/12/JavaCodeGeeks-logo.png.webp",
+"sourceName":"Java Code Geeks",
+"updateIntervalMinutes":{"$numberInt":"60"},
+"url":"<Feed URL>",
+"enabled":true,
+"descriptionProcessingStrategy":"default",
+"lastBuildDate":{"$date":{"$numberLong":"1537144813994"}},
+"categoryList":["News"]}

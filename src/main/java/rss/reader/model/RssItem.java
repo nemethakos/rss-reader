@@ -3,9 +3,7 @@ package rss.reader.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Generated;
 
@@ -19,6 +17,19 @@ public class RssItem {
 	 */
 	private List<String> categoryList = new ArrayList<>();
 	
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("RssItem [categoryList=").append(categoryList).append(", description=").append(description)
+				.append(", guid=").append(guid).append(", id=").append(id).append(", jsoupCssSelector=")
+				.append(jsoupCssSelector).append(", keywordList=").append(keywordList).append(", link=").append(link)
+				.append(", media=").append(media).append(", providerImage=").append(providerImage)
+				.append(", providerName=").append(providerName).append(", publicationDate=").append(publicationDate)
+				.append(", rssMediaList=").append(rssMediaList).append(", stringifiedEntry=").append(stringifiedEntry)
+				.append(", title=").append(title).append("]");
+		return builder2.toString();
+	}
+
 	/**
 	 * Description of RSS entry
 	 */
@@ -34,12 +45,20 @@ public class RssItem {
 	 */
 	private String id;
 	
+	public List<Word> getKeywordList() {
+		return keywordList;
+	}
+
+	public void setKeywordList(List<Word> keywordList) {
+		this.keywordList = keywordList;
+	}
+
 	private String jsoupCssSelector;
 	
 	/**
 	 * Set of keywords extracted from the article body
 	 */
-	private Set<Word> keywordSet = new HashSet<>();
+	private List<Word> keywordList = new ArrayList<>();
 	
 	/**
 	 * Link to the article
@@ -88,7 +107,7 @@ public class RssItem {
 		this.guid = builder.guid;
 		this.id = builder.id;
 		this.jsoupCssSelector = builder.jsoupCssSelector;
-		this.keywordSet = builder.keywordSet;
+		this.keywordList = builder.keywordList;
 		this.link = builder.link;
 		this.media = builder.media;
 		this.providerImage = builder.providerImage;
@@ -114,9 +133,6 @@ public class RssItem {
 		return id;
 	}
 	
-	public Set<Word> getKeywordSet() {
-		return keywordSet;
-	}
 	public String getLink() {
 		return link;
 	}
@@ -154,20 +170,11 @@ public class RssItem {
 		this.id = id;
 	}
 	
-	public void setKeywordSet(Set<Word> keywordSet) {
-		this.keywordSet = keywordSet;
-	}
+	
 	public void setLink(String link) {
 		this.link = link;
 	}
-	@Override
-	public String toString() {
-		return "RssItem [categoryList=" + categoryList + ", description=" + description + ", guid=" + guid + ", id="
-				+ id + ", jsoupCssSelector=" + jsoupCssSelector + ", keywordSet=" + keywordSet + ", link=" + link
-				+ ", media=" + media + ", providerImage=" + providerImage + ", providerName=" + providerName
-				+ ", publicationDate=" + publicationDate + ", rssMediaList=" + rssMediaList + ", stringifiedEntry="
-				+ stringifiedEntry + ", title=" + title + "]";
-	}
+	
 
 	public void setMedia(RssMedia media) {
 		this.media = media;
@@ -218,7 +225,7 @@ public class RssItem {
 		private String guid;
 		private String id;
 		private String jsoupCssSelector;
-		private Set<Word> keywordSet = Collections.emptySet();
+		private List<Word> keywordList = Collections.emptyList();
 		private String link;
 		private RssMedia media;
 		private String providerImage;
@@ -256,8 +263,8 @@ public class RssItem {
 			return this;
 		}
 
-		public Builder withKeywordSet(Set<Word> keywordSet) {
-			this.keywordSet = keywordSet;
+		public Builder withKeywordList(List<Word> keywordList) {
+			this.keywordList = keywordList;
 			return this;
 		}
 

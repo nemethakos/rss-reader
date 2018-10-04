@@ -11,20 +11,27 @@ class ArticleDownloaderTest {
 	ArticleDownloader DOWNLOADER = new ArticleDownloader( PosTaggerAndLemmatizer.getInstance());
 
 	@Test
+	void urlEscapeTest() {
+		String original = "http://a57.foxnews.com/www.foxnews.com/content/dam/fox-news/images/2018/09/29/270/152/kailyn pollard cropped.jpg?ve=1&tl=1";
+		original.replace(" ", "+");
+	}
+	
+	@Test
 	void testDownload() throws IOException {
-
+/*
 		System.out.println(DOWNLOADER.getTextFromHtmlPageUsingJsoupCssSelector(
 				"https://edition.cnn.com/2018/08/29/uk/holiday-hunger-uk-intl/index.html", "div.pg-special-article__body"));
+	*/
 	}
 
 	@Test
 	void test() throws IOException {
 
 		//"
-
+/*
 		System.out.println(
 				DOWNLOADER.getTags("https://edition.cnn.com/2018/08/29/uk/holiday-hunger-uk-intl/index.html", "div.pg-special-article__body"));
-
+*/
 /*		
 		System.out.println(
 				DOWNLOADER.getTags("https://money.cnn.com/2018/08/27/technology/elon-musk-tesla-challenges/index.html",

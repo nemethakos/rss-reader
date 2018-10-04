@@ -88,10 +88,10 @@ public class RssReader {
 		try {
 			feed = input.build(new XmlReader(feedUrl));
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.error("Error processing feed: " + feedUrl.toString(), e);
 		}
 
-		// logger.info(feed.toString());
+		//logger.info(feed.toString());
 
 		var entries = feed.getEntries();
 
@@ -110,8 +110,25 @@ public class RssReader {
 		}
 
 		for (var entry : entries) {
-
-			var syndContent = entry.getContents().stream().filter(content -> content.getValue() != null).findFirst()
+			
+			var categoryList = entry//
+					.getCategories()//
+					.stream()//
+					.map(category->category.getName())//
+					.collect(Collectors.toList());
+			
+			if (categoryList.size()==0) {
+				categoryList.addAll(feedDefinition.getCategoryList());
+			}
+			
+			//System.out.println("-------------------------------------------------------\r\n"+providerName+": "+categoryList+"\r\n");
+			
+			
+			var syndContent = entry//
+					.getContents()//
+					.stream()//
+					.filter(content -> content.getValue() != null)//
+					.findFirst()//
 					.orElse(null);
 			String textSyndContent = null;
 			if (syndContent != null) {
@@ -217,6 +234,7 @@ public class RssReader {
 					.withGuid(guid)//
 					.withStringifiedEntry(stringified)//
 					.withJsoupCssSelector(feedDefinition.getJsoupCssSelector())//
+					.withCategoryList(categoryList)//
 					.build();
 
 			result.add(item);
